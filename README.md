@@ -39,7 +39,7 @@ The source is organized like `lib/` in `css/`, and `css/retrostrap.css` plays th
     css/forms.css        inputs, add-ons, states
     css/tables.css       zebra, bordered, condensed
     css/patterns.css     buttons, topbar, alerts, tabs/pills/pagination, labels/badges, modals, twipsy, popovers
-    css/responsive.css   breakpoints, reduced motion, forced colors
+    css/responsive.css   breakpoints (940 / 767 / 480px), reduced motion, forced colors
 
 The root `retrostrap.css` is those files concatenated in the same order. Regenerate it after editing `css/` (PowerShell):
 
@@ -61,6 +61,8 @@ Brand color: to drive the whole blue family from one value, opt in to derived mo
     document.documentElement.style.setProperty('--retro-primary', '#2e8b57');
 
 Without `data-retro-brand="derived"` the original Bootstrap 1.1.1 hex values are used exactly.
+
+Responsive: include `<meta name="viewport" content="width=device-width, initial-scale=1">` in your `<head>`. At ≤940px the container becomes fluid, at ≤767px the grid stacks to one column, the topbar stops being fixed and wraps, and tables scroll horizontally; at ≤480px spacing and headings tighten further.
 
 Open `retrostrap-demo.html` for every component plus a live theme editor.
 
