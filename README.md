@@ -23,6 +23,21 @@ Or if you prefer, the standard css way:
 For more info, refer to the docs!
 
 
+Retrostrap (modern raw-CSS port)
+--------------------------------
+
+`retrostrap.css` is a single-file, preprocessor-free port of Bootstrap 1.1.1 for modern browsers. It uses `--retro-*` custom properties on `:root`, native CSS nesting, `color-mix()` and relative color syntax (`hsl(from ...)`), and CSS flexbox for the unchanged `.row` / `.spanN` / `.offsetN` grid.
+
+    <link rel="stylesheet" href="retrostrap.css">
+
+Re-theme at runtime by changing tokens on `:root`; derived colors (hover, tints, error shades) follow automatically:
+
+    document.documentElement.style.setProperty('--retro-primary', '#ff6600');
+    document.documentElement.style.setProperty('--retro-primary-dark', '#aa3300');
+
+Open `retrostrap-demo.html` for every component plus a live theme editor.
+
+
 Bug Tracker
 -----------
 
