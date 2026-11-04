@@ -30,6 +30,22 @@ Retrostrap (modern raw-CSS port)
 
     <link rel="stylesheet" href="retrostrap.css">
 
+The source is organized like `lib/` in `css/`, and `css/retrostrap.css` plays the role of `lib/bootstrap.less` by `@import`ing the modules in cascade order (you can link it directly, no build needed):
+
+    css/reset.css        Meyer reset + normalize
+    css/preboot.css      --retro-* design tokens (LESS variables)
+    css/scaffolding.css  grid, containers, links, focus
+    css/type.css         headings, text, lists, code
+    css/forms.css        inputs, add-ons, states
+    css/tables.css       zebra, bordered, condensed
+    css/patterns.css     buttons, topbar, alerts, tabs/pills/pagination, labels/badges, modals, twipsy, popovers
+    css/responsive.css   breakpoints, reduced motion, forced colors
+
+The root `retrostrap.css` is those files concatenated in the same order. Regenerate it after editing `css/` (PowerShell):
+
+    $h=(gc -raw css/retrostrap.css); $h=$h.Substring(0,$h.IndexOf('*/')+2)
+    $h + "`n`n" + ((echo reset preboot scaffolding type forms tables patterns responsive | % { (gc -raw "css/$_.css").TrimEnd() }) -join "`n`n`n") | sc retrostrap.css -Encoding utf8
+
 Re-theme at runtime by changing tokens on `:root`; derived colors (hover, tints, error shades) follow automatically:
 
     document.documentElement.style.setProperty('--retro-primary', '#ff6600');

@@ -1,12 +1,12 @@
 /*!
  * Retrostrap v1.1.1
- * A modern, single-file, raw-CSS port of Twitter Bootstrap 1.1.1 (LESS).
+ * A modern, raw-CSS port of Twitter Bootstrap 1.1.1 (LESS).
  *
  * Original Bootstrap: Copyright 2011 Twitter, Inc. Licensed under the Apache License v2.0
  * http://www.apache.org/licenses/LICENSE-2.0
  *
  * No preprocessor, no build step. Requires a 2024+ evergreen browser:
- *   - CSS custom properties, native nesting, :is()/:where()/:has()
+ *   - CSS custom properties, native nesting, :is()/:where()
  *   - color-mix() and relative color syntax (hsl(from ...))
  *
  * Theming: every colour, font and metric lives on :root as --retro-* custom
@@ -14,34 +14,90 @@
  * computed from the base tokens, so editing e.g. --retro-primary or
  * --retro-link on :root at runtime re-themes the whole framework live.
  *
- * LESS -> CSS equivalents used in this file:
+ * LESS -> CSS equivalents used throughout:
  *   lighten(c, n%)   hsl(from c h s calc(l + n))
  *   darken(c, n%)    hsl(from c h s calc(l - n))
  *   desaturate(c, n) hsl(from c h calc(s - n) l)
  *   spin(c, deg)     hsl(from c calc(h + deg) s l)
  *   fade(c, a)       color-mix(in srgb, c a%, transparent)
  *
- * Contents
- *   1. Design tokens
- *   2. Reset & normalize
- *   3. Scaffolding (grid, containers, links, focus)
- *   4. Typography
- *   5. Buttons
- *   6. Forms
- *   7. Tables
- *   8. Topbar / navbar
- *   9. Page patterns (hero, page header, wells)
- *  10. Alerts
- *  11. Navigation (tabs, pills, pagination)
- *  12. Labels & badges
- *  13. Modals
- *  14. Twipsy / tooltips & popovers
- *  15. Responsive & accessibility
+ * Single-file bundle of the modules in css/ (reset, preboot, scaffolding,
+ * type, forms, tables, patterns, responsive). Edit css/ and regenerate.
  * ------------------------------------------------------------------------- */
 
 
 /* ==========================================================================
-   1. DESIGN TOKENS
+   RESET: Eric Meyer reset + selected normalize.css rules (lib/reset.less)
+   ========================================================================== */
+
+html, body { margin: 0; padding: 0; }
+
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code,
+del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt,
+li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot,
+thead, tr, th, td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 100%;
+  line-height: 1;
+  font-family: inherit;
+}
+
+table { border-collapse: collapse; border-spacing: 0; }
+ol, ul { list-style: none; }
+q::before, q::after, blockquote::before, blockquote::after { content: ""; }
+
+html {
+  overflow-y: scroll;
+  font-size: 100%;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+audio:not([controls]) { display: none; }
+
+sub, sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+img { border: 0; }
+
+button, input, select, textarea {
+  font-size: 100%;
+  margin: 0;
+  vertical-align: baseline;
+}
+button, input { line-height: normal; }
+button,
+input[type="button"],
+input[type="reset"],
+input[type="submit"] {
+  cursor: pointer;
+  -webkit-appearance: button;
+  appearance: button;
+}
+input[type="search"] {
+  -webkit-appearance: textfield;
+  appearance: textfield;
+  box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
+textarea { overflow: auto; vertical-align: top; }
+
+
+/* ==========================================================================
+   PREBOOT: design tokens (the LESS variables from lib/preboot.less)
+   Every colour, font and metric is a --retro-* custom property on :root.
+   Derived values use relative color syntax and color-mix(), so changing a
+   base token at runtime re-themes everything.
    ========================================================================== */
 
 :root {
@@ -163,74 +219,8 @@
 
 
 /* ==========================================================================
-   2. RESET & NORMALIZE  (Eric Meyer reset + normalize.css selections)
-   ========================================================================== */
-
-html, body { margin: 0; padding: 0; }
-
-h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code,
-del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt,
-li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot,
-thead, tr, th, td {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  font-weight: normal;
-  font-style: normal;
-  font-size: 100%;
-  line-height: 1;
-  font-family: inherit;
-}
-
-table { border-collapse: collapse; border-spacing: 0; }
-ol, ul { list-style: none; }
-q::before, q::after, blockquote::before, blockquote::after { content: ""; }
-
-html {
-  overflow-y: scroll;
-  font-size: 100%;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-
-audio:not([controls]) { display: none; }
-
-sub, sup {
-  font-size: 75%;
-  line-height: 0;
-  position: relative;
-  vertical-align: baseline;
-}
-sup { top: -0.5em; }
-sub { bottom: -0.25em; }
-
-img { border: 0; }
-
-button, input, select, textarea {
-  font-size: 100%;
-  margin: 0;
-  vertical-align: baseline;
-}
-button, input { line-height: normal; }
-button,
-input[type="button"],
-input[type="reset"],
-input[type="submit"] {
-  cursor: pointer;
-  -webkit-appearance: button;
-  appearance: button;
-}
-input[type="search"] {
-  -webkit-appearance: textfield;
-  appearance: textfield;
-  box-sizing: content-box;
-}
-input[type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
-textarea { overflow: auto; vertical-align: top; }
-
-
-/* ==========================================================================
-   3. SCAFFOLDING
+   SCAFFOLDING: grid, containers, structural layout, links, focus
+   (lib/scaffolding.less; the button base lives in patterns.css)
    ========================================================================== */
 
 /* Grid: CSS-flexbox rows driven by --retro-grid-* tokens. The original
@@ -370,7 +360,7 @@ a {
 
 
 /* ==========================================================================
-   4. TYPOGRAPHY
+   TYPOGRAPHY: headings, body text, lists, code (lib/type.less)
    ========================================================================== */
 
 p {
@@ -514,153 +504,7 @@ pre {
 
 
 /* ==========================================================================
-   5. BUTTONS
-   ========================================================================== */
-
-/* Colour hooks shared by .btn and .alert-message; each variant just swaps
-   the two gradient stops. Declared first so the structural rules below win
-   ties exactly as in the original cascade. */
-.btn, .alert-message {
-  --retro-bar-top: var(--retro-btn-top);
-  --retro-bar-bottom: var(--retro-btn-bottom);
-
-  &.danger, &.error, &.btn-danger, &.alert-danger {
-    --retro-bar-top: var(--retro-danger);
-    --retro-bar-bottom: var(--retro-danger-dark);
-  }
-  &.success, &.btn-success, &.alert-success {
-    --retro-bar-top: var(--retro-success);
-    --retro-bar-bottom: var(--retro-success-dark);
-  }
-  &.info, &.btn-info, &.alert-info {
-    --retro-bar-top: var(--retro-info);
-    --retro-bar-bottom: var(--retro-info-dark);
-  }
-  &.primary, &.btn-primary {
-    --retro-bar-top: var(--retro-primary);
-    --retro-bar-bottom: var(--retro-primary-dark);
-  }
-  &.btn-secondary {
-    --retro-bar-top: var(--retro-secondary);
-    --retro-bar-bottom: var(--retro-secondary-dark);
-  }
-}
-
-/* The ".gradientBar" mixin: top-to-bottom gradient, engraved text shadow
-   and a translucent border that darkens toward the bottom edge. */
-.btn:is(.danger, .error, .btn-danger, .success, .btn-success, .info, .btn-info,
-        .primary, .btn-primary),
-.alert-message {
-  background-color: var(--retro-bar-bottom);
-  background-repeat: repeat-x;
-  background-image: linear-gradient(to bottom, var(--retro-bar-top), var(--retro-bar-bottom));
-  text-shadow: 0 -1px 0 rgb(0 0 0 / 0.25);
-  border-color: rgb(0 0 0 / 0.1) rgb(0 0 0 / 0.1) rgb(0 0 0 / 0.25);
-}
-.btn:is(.danger, .error, .btn-danger, .success, .btn-success, .info, .btn-info,
-        .primary, .btn-primary) {
-  color: var(--retro-white);
-
-  &:hover { color: var(--retro-white); }
-}
-.alert-message:is(.danger, .error, .alert-danger, .success, .alert-success,
-                  .info, .alert-info) {
-  color: var(--retro-white);
-
-  &:hover { color: var(--retro-white); }
-}
-
-/* Base button: white-to-grey bevel, 1px darker bottom edge, inset highlight */
-.btn {
-  cursor: pointer;
-  display: inline-block;
-  background-color: var(--retro-btn-bottom);
-  background-repeat: no-repeat;
-  background-image: linear-gradient(
-    to bottom, var(--retro-btn-top), var(--retro-btn-top) 25%, var(--retro-btn-bottom)
-  );
-  padding: 5px 14px 6px;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 0.75);
-  color: var(--retro-text-btn);
-  font-size: var(--retro-font-base);
-  line-height: normal;
-  border: 1px solid var(--retro-border);
-  border-bottom-color: var(--retro-border-dark);
-  border-radius: var(--retro-radius);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 1px 2px rgb(0 0 0 / 0.05);
-  transition: 0.1s linear all;
-
-  /* Sliding the gradient up 15px is the original "hover" effect: the lower
-     half falls back to the solid bottom colour, so the button looks pressed in. */
-  &:hover {
-    background-position: 0 -15px;
-    color: var(--retro-text-btn);
-    text-decoration: none;
-  }
-
-  &:is(.btn-secondary) {
-    background-color: var(--retro-secondary-dark);
-    background-image: linear-gradient(
-      to bottom, var(--retro-secondary), var(--retro-secondary) 25%, var(--retro-secondary-dark)
-    );
-  }
-
-  &:is(.primary, .btn-primary, .danger, .error, .btn-danger, .success, .btn-success,
-       .info, .btn-info) {
-    color: var(--retro-white);
-  }
-
-  /* Sizes */
-  &.large {
-    font-size: 16px;
-    line-height: normal;
-    padding: 9px 14px;
-    border-radius: var(--retro-radius-lg);
-  }
-  &.small {
-    padding: 7px 9px;
-    font-size: 11px;
-  }
-
-  /* Pressed: inset shadow */
-  &:active,
-  &.active {
-    box-shadow: inset 0 3px 7px rgb(0 0 0 / 0.1), 0 1px 2px rgb(0 0 0 / 0.05);
-  }
-
-  /* Visible keyboard focus (WCAG 2.2 AA): 2px ring, 2px offset */
-  &:focus-visible {
-    outline: 2px solid var(--retro-focus-ring);
-    outline-offset: 2px;
-  }
-
-  /* Disabled: .disabled and :disabled are kept as separate rules in the original */
-  &.disabled {
-    cursor: default;
-    background-image: none;
-    opacity: 0.65;
-    box-shadow: none;
-  }
-  &:disabled,
-  &[aria-disabled="true"] {
-    cursor: default;
-    background-image: none;
-    opacity: 0.65;
-    box-shadow: none;
-
-    &:is(.primary, .btn-primary) { color: var(--retro-white); }
-  }
-}
-
-button.btn::-moz-focus-inner,
-input[type="submit"].btn::-moz-focus-inner {
-  padding: 0;
-  border: 0;
-}
-
-
-/* ==========================================================================
-   6. FORMS
+   FORMS: inputs, selects, textareas, add-ons, states (lib/forms.less)
    ========================================================================== */
 
 form { margin-bottom: var(--retro-baseline); }
@@ -1006,7 +850,7 @@ input.disabled,
 
 
 /* ==========================================================================
-   7. TABLES
+   TABLES: base, zebra-striped, bordered, condensed (lib/tables.less)
    ========================================================================== */
 
 table {
@@ -1121,7 +965,157 @@ table {
 
 
 /* ==========================================================================
-   8. TOPBAR / NAVBAR
+   PATTERNS (lib/patterns.less): buttons, topbar, page patterns, alerts,
+   navigation, labels & badges, modals, twipsy and popovers.
+   Buttons come first because the alerts reuse their gradient hooks.
+
+   BUTTONS
+   ========================================================================== */
+
+/* Colour hooks shared by .btn and .alert-message; each variant just swaps
+   the two gradient stops. Declared first so the structural rules below win
+   ties exactly as in the original cascade. */
+.btn, .alert-message {
+  --retro-bar-top: var(--retro-btn-top);
+  --retro-bar-bottom: var(--retro-btn-bottom);
+
+  &.danger, &.error, &.btn-danger, &.alert-danger {
+    --retro-bar-top: var(--retro-danger);
+    --retro-bar-bottom: var(--retro-danger-dark);
+  }
+  &.success, &.btn-success, &.alert-success {
+    --retro-bar-top: var(--retro-success);
+    --retro-bar-bottom: var(--retro-success-dark);
+  }
+  &.info, &.btn-info, &.alert-info {
+    --retro-bar-top: var(--retro-info);
+    --retro-bar-bottom: var(--retro-info-dark);
+  }
+  &.primary, &.btn-primary {
+    --retro-bar-top: var(--retro-primary);
+    --retro-bar-bottom: var(--retro-primary-dark);
+  }
+  &.btn-secondary {
+    --retro-bar-top: var(--retro-secondary);
+    --retro-bar-bottom: var(--retro-secondary-dark);
+  }
+}
+
+/* The ".gradientBar" mixin: top-to-bottom gradient, engraved text shadow
+   and a translucent border that darkens toward the bottom edge. */
+.btn:is(.danger, .error, .btn-danger, .success, .btn-success, .info, .btn-info,
+        .primary, .btn-primary),
+.alert-message {
+  background-color: var(--retro-bar-bottom);
+  background-repeat: repeat-x;
+  background-image: linear-gradient(to bottom, var(--retro-bar-top), var(--retro-bar-bottom));
+  text-shadow: 0 -1px 0 rgb(0 0 0 / 0.25);
+  border-color: rgb(0 0 0 / 0.1) rgb(0 0 0 / 0.1) rgb(0 0 0 / 0.25);
+}
+.btn:is(.danger, .error, .btn-danger, .success, .btn-success, .info, .btn-info,
+        .primary, .btn-primary) {
+  color: var(--retro-white);
+
+  &:hover { color: var(--retro-white); }
+}
+.alert-message:is(.danger, .error, .alert-danger, .success, .alert-success,
+                  .info, .alert-info) {
+  color: var(--retro-white);
+
+  &:hover { color: var(--retro-white); }
+}
+
+/* Base button: white-to-grey bevel, 1px darker bottom edge, inset highlight */
+.btn {
+  cursor: pointer;
+  display: inline-block;
+  background-color: var(--retro-btn-bottom);
+  background-repeat: no-repeat;
+  background-image: linear-gradient(
+    to bottom, var(--retro-btn-top), var(--retro-btn-top) 25%, var(--retro-btn-bottom)
+  );
+  padding: 5px 14px 6px;
+  text-shadow: 0 1px 1px rgb(255 255 255 / 0.75);
+  color: var(--retro-text-btn);
+  font-size: var(--retro-font-base);
+  line-height: normal;
+  border: 1px solid var(--retro-border);
+  border-bottom-color: var(--retro-border-dark);
+  border-radius: var(--retro-radius);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 1px 2px rgb(0 0 0 / 0.05);
+  transition: 0.1s linear all;
+
+  /* Sliding the gradient up 15px is the original "hover" effect: the lower
+     half falls back to the solid bottom colour, so the button looks pressed in. */
+  &:hover {
+    background-position: 0 -15px;
+    color: var(--retro-text-btn);
+    text-decoration: none;
+  }
+
+  &:is(.btn-secondary) {
+    background-color: var(--retro-secondary-dark);
+    background-image: linear-gradient(
+      to bottom, var(--retro-secondary), var(--retro-secondary) 25%, var(--retro-secondary-dark)
+    );
+  }
+
+  &:is(.primary, .btn-primary, .danger, .error, .btn-danger, .success, .btn-success,
+       .info, .btn-info) {
+    color: var(--retro-white);
+  }
+
+  /* Sizes */
+  &.large {
+    font-size: 16px;
+    line-height: normal;
+    padding: 9px 14px;
+    border-radius: var(--retro-radius-lg);
+  }
+  &.small {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  /* Pressed: inset shadow */
+  &:active,
+  &.active {
+    box-shadow: inset 0 3px 7px rgb(0 0 0 / 0.1), 0 1px 2px rgb(0 0 0 / 0.05);
+  }
+
+  /* Visible keyboard focus (WCAG 2.2 AA): 2px ring, 2px offset */
+  &:focus-visible {
+    outline: 2px solid var(--retro-focus-ring);
+    outline-offset: 2px;
+  }
+
+  /* Disabled: .disabled and :disabled are kept as separate rules in the original */
+  &.disabled {
+    cursor: default;
+    background-image: none;
+    opacity: 0.65;
+    box-shadow: none;
+  }
+  &:disabled,
+  &[aria-disabled="true"] {
+    cursor: default;
+    background-image: none;
+    opacity: 0.65;
+    box-shadow: none;
+
+    &:is(.primary, .btn-primary) { color: var(--retro-white); }
+  }
+}
+
+button.btn::-moz-focus-inner,
+input[type="submit"].btn::-moz-focus-inner {
+  padding: 0;
+  border: 0;
+}
+
+
+/* ==========================================================================
+   TOPBAR / NAVBAR
    ========================================================================== */
 
 .topbar, .navbar {
@@ -1360,7 +1354,7 @@ table {
 
 
 /* ==========================================================================
-   9. PAGE PATTERNS: hero unit, page header, footer, wells
+   PAGE PATTERNS: hero unit, page header, footer, wells
    ========================================================================== */
 
 .hero-unit {
@@ -1410,7 +1404,7 @@ footer {
 
 
 /* ==========================================================================
-   10. ALERTS
+   ALERTS
    ========================================================================== */
 
 /* Colours come from the shared gradient hooks in section 5; the default
@@ -1495,7 +1489,7 @@ footer {
 
 
 /* ==========================================================================
-   11. NAVIGATION: tabs, pills, pagination
+   NAVIGATION: tabs, pills, pagination
    ========================================================================== */
 
 .tabs, .pills {
@@ -1601,7 +1595,7 @@ footer {
 
 
 /* ==========================================================================
-   12. LABELS & BADGES
+   LABELS & BADGES
    ========================================================================== */
 
 /* Both are tinted by --retro-tag. A translucent gradient overlay supplies the
@@ -1642,7 +1636,7 @@ footer {
 
 
 /* ==========================================================================
-   13. MODALS
+   MODALS
    ========================================================================== */
 
 .modal-backdrop {
@@ -1711,7 +1705,7 @@ footer {
 
 
 /* ==========================================================================
-   14. TWIPSY / TOOLTIPS & POPOVERS
+   TWIPSY / TOOLTIPS & POPOVERS
    ========================================================================== */
 
 .twipsy, .tooltip {
@@ -1850,7 +1844,7 @@ footer {
 
 
 /* ==========================================================================
-   15. RESPONSIVE & ACCESSIBILITY
+   RESPONSIVE & ACCESSIBILITY (new in Retrostrap; must load last)
    ========================================================================== */
 
 /* Tablet and below: container gains side padding so the negative-margin row

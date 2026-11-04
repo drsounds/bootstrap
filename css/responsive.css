@@ -1,0 +1,60 @@
+/* ==========================================================================
+   RESPONSIVE & ACCESSIBILITY (new in Retrostrap; must load last)
+   ========================================================================== */
+
+/* Tablet and below: container gains side padding so the negative-margin row
+   still fits the viewport. */
+@media (max-width: 940px) {
+  .container {
+    box-sizing: border-box;
+    padding-inline: var(--retro-grid-gutter);
+  }
+}
+
+/* Phone: the grid collapses to a single column (spans stack, offsets clamp
+   to zero through the min() in the offset rule). */
+@media (max-width: 767px) {
+  .row { --_cols: 1; }
+
+  .container-fluid {
+    display: block;
+
+    & .sidebar { width: auto; }
+    & .content { min-width: 0; }
+  }
+
+  .hero-unit {
+    padding: 30px;
+    margin-top: 50px;
+
+    & h1 { font-size: 40px; }
+  }
+
+  .modal {
+    width: auto;
+    min-width: 0;
+  }
+
+  fieldset legend { margin-left: 0; }
+  .topbar form input,
+  .navbar form input { width: 120px; }
+  label {
+    float: none;
+    width: auto;
+    text-align: left;
+  }
+  div.input,
+  .actions { margin-left: 0; }
+  .actions { padding-left: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .btn, .label, .badge, .alert-message { border-color: ButtonText; }
+}
