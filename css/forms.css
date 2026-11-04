@@ -62,7 +62,7 @@ input[type="radio"] {
   line-height: var(--retro-baseline);
   height: var(--retro-baseline);
   color: var(--retro-gray);
-  background-color: var(--retro-white);
+  background-color: var(--retro-field-bg);
   border: 1px solid var(--retro-border);
   border-radius: var(--retro-radius-sm);
 }
@@ -118,7 +118,7 @@ form div.error {
   & > label,
   & span.help-inline,
   & span.help-block {
-    color: var(--retro-red);
+    color: var(--retro-error-fg);
   }
 
   & :is(input:not([type]), input[type="text"], input[type="password"], input[type="email"],
@@ -234,7 +234,7 @@ input.disabled,
     line-height: 18px;
     height: 18px;
     text-align: center;
-    text-shadow: 0 1px 0 var(--retro-white);
+    text-shadow: 0 1px 0 var(--retro-glow-solid);
     border: 1px solid var(--retro-border);
     border-right-width: 0;
     border-radius: var(--retro-radius-sm) 0 0 var(--retro-radius-sm);

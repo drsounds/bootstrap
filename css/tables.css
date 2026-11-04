@@ -40,7 +40,7 @@ table {
       margin-top: 7px;
       border-width: 0 4px 4px;
       border-style: solid;
-      border-color: var(--retro-black) transparent;
+      border-color: var(--retro-ink) transparent;
       visibility: hidden;
     }
     &:hover::after { visibility: visible; }
@@ -49,7 +49,7 @@ table {
   & .headerSortUp,
   & .headerSortDown {
     background-color: color-mix(in srgb, rgb(141 192 219) 25%, transparent);
-    text-shadow: 0 1px 1px rgb(255 255 255 / 0.75);
+    text-shadow: 0 1px 1px var(--retro-glow);
     border-radius: var(--retro-radius-sm) var(--retro-radius-sm) 0 0;
   }
   & .headerSortDown::after,
@@ -61,7 +61,7 @@ table {
     border-bottom: none;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 4px solid var(--retro-black);
+    border-top: 4px solid var(--retro-ink);
     visibility: visible;
     opacity: 0.6;
   }
@@ -73,7 +73,7 @@ table {
   border-collapse: separate;
   border-left: 0;
   border-radius: var(--retro-radius);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  box-shadow: inset 0 1px 0 var(--retro-bevel);
 
   & th + th,
   & td + td,
@@ -95,14 +95,15 @@ table {
   & th { padding-top: 4px; }
 }
 
-/* Coloured table headings */
+/* Coloured table headings. Tints are pale on light and deep on dark;
+   red and purple text is lifted on dark for contrast. */
 table {
-  & .blue  { --_th: var(--retro-blue);   --_th-tint: hsl(from var(--retro-blue) h s calc(l + 40)); }
-  & .green { --_th: var(--retro-green);  --_th-tint: hsl(from var(--retro-green) h s calc(l + 40)); }
-  & .red   { --_th: var(--retro-red);    --_th-tint: hsl(from var(--retro-red) h s calc(l + 50)); }
-  & .yellow{ --_th: var(--retro-yellow); --_th-tint: hsl(from var(--retro-yellow) h s calc(l + 40)); }
-  & .orange{ --_th: var(--retro-orange); --_th-tint: hsl(from var(--retro-orange) h s calc(l + 40)); }
-  & .purple{ --_th: var(--retro-purple); --_th-tint: hsl(from var(--retro-purple) h s calc(l + 40)); }
+  & .blue  { --_th: var(--retro-blue);   --_th-tint: light-dark(hsl(from var(--retro-blue) h s calc(l + 40)), hsl(from var(--retro-blue) h s calc(l - 25))); }
+  & .green { --_th: var(--retro-green);  --_th-tint: light-dark(hsl(from var(--retro-green) h s calc(l + 40)), hsl(from var(--retro-green) h s calc(l - 25))); }
+  & .red   { --_th: var(--retro-error-fg); --_th-tint: light-dark(hsl(from var(--retro-red) h s calc(l + 50)), hsl(from var(--retro-red) h s calc(l - 12))); }
+  & .yellow{ --_th: var(--retro-yellow); --_th-tint: light-dark(hsl(from var(--retro-yellow) h s calc(l + 40)), hsl(from var(--retro-yellow) h s calc(l - 40))); }
+  & .orange{ --_th: var(--retro-orange); --_th-tint: light-dark(hsl(from var(--retro-orange) h s calc(l + 40)), hsl(from var(--retro-orange) h s calc(l - 30))); }
+  & .purple{ --_th: light-dark(var(--retro-purple), hsl(from var(--retro-purple) h s calc(l + 20))); --_th-tint: light-dark(hsl(from var(--retro-purple) h s calc(l + 40)), hsl(from var(--retro-purple) h s calc(l - 20))); }
 
   & :is(.blue, .green, .red, .yellow, .orange, .purple) {
     color: var(--_th);

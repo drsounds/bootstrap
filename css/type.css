@@ -124,8 +124,8 @@ code, pre {
   border-radius: var(--retro-radius-sm);
 }
 code {
-  background-color: hsl(from var(--retro-orange) h s calc(l + 40));
-  color: rgb(0 0 0 / 0.75);
+  background-color: var(--retro-code-bg);
+  color: var(--retro-code-fg);
   padding: 1px 3px;
 }
 pre {
@@ -135,7 +135,7 @@ pre {
   background-color: var(--retro-surface);
   line-height: var(--retro-baseline);
   font-size: 12px;
-  border: 1px solid rgb(0 0 0 / 0.15);
+  border: 1px solid var(--retro-line);
   border-radius: var(--retro-radius-sm);
   white-space: pre-wrap;
   word-wrap: break-word;

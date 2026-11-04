@@ -69,12 +69,12 @@
     to bottom, var(--retro-btn-top), var(--retro-btn-top) 25%, var(--retro-btn-bottom)
   );
   padding: 5px 14px 6px;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 0.75);
+  text-shadow: 0 1px 1px var(--retro-glow);
   color: var(--retro-text-btn);
   font-size: var(--retro-font-base);
   line-height: normal;
-  border: 1px solid var(--retro-border);
-  border-bottom-color: var(--retro-border-dark);
+  border: 1px solid var(--retro-btn-border);
+  border-bottom-color: var(--retro-btn-border-bottom);
   border-radius: var(--retro-radius);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 1px 2px rgb(0 0 0 / 0.05);
   transition: 0.1s linear all;
@@ -170,7 +170,7 @@ input[type="submit"].btn::-moz-focus-inner {
   }
 
   & a {
-    color: var(--retro-gray-light);
+    color: var(--retro-topbar-text);
     text-shadow: 0 -1px 0 rgb(0 0 0 / 0.25);
 
     &:focus-visible {
@@ -221,7 +221,7 @@ input[type="submit"].btn::-moz-focus-inner {
       box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1), 0 1px 0 rgb(255 255 255 / 0.25);
       transition: none;
 
-      &::placeholder { color: var(--retro-gray-lighter); }
+      &::placeholder { color: var(--retro-topbar-placeholder); }
 
       &:hover {
         background-color: rgb(255 255 255 / 0.5);
@@ -230,9 +230,9 @@ input[type="submit"].btn::-moz-focus-inner {
       &:focus,
       &.focused {
         outline: 2px solid transparent;
-        background-color: var(--retro-white);
-        color: var(--retro-gray-dark);
-        text-shadow: 0 1px 0 var(--retro-white);
+        background-color: var(--retro-topbar-focus-bg);
+        color: var(--retro-topbar-focus-text);
+        text-shadow: 0 1px 0 var(--retro-topbar-focus-bg);
         border: 0;
         padding: 5px 10px;
         box-shadow: 0 0 3px rgb(0 0 0 / 0.15);
@@ -354,7 +354,7 @@ input[type="submit"].btn::-moz-focus-inner {
           clear: both;
           font-weight: normal;
           line-height: 19px;
-          color: var(--retro-border-dark);
+          color: var(--retro-topbar-menu-text);
 
           &:hover {
             background-color: rgb(255 255 255 / 0.25);
@@ -378,8 +378,7 @@ input[type="submit"].btn::-moz-focus-inner {
           background: rgb(0 0 0 / 0.2);
           padding: 6px 15px;
           cursor: default;
-          color: var(--retro-gray);
-          border-top: 1px solid rgb(0 0 0 / 0.2);
+          color: var(--retro-topbar-section);
         }
       }
     }
@@ -420,7 +419,7 @@ footer {
 .page-header {
   margin-bottom: calc(var(--retro-baseline) - 1px);
   border-bottom: 1px solid var(--retro-rule);
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.5);
+  box-shadow: 0 1px 0 var(--retro-bevel);
 
   & h1 { margin-bottom: calc(var(--retro-baseline) / 2 - 1px); }
 }
@@ -431,9 +430,9 @@ footer {
   margin-bottom: 20px;
   padding: 19px;
   min-height: 20px;
-  border: 1px solid rgb(0 0 0 / 0.05);
+  border: 1px solid var(--retro-line-faint);
   border-radius: var(--retro-radius);
-  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.05);
+  box-shadow: inset 0 1px 1px var(--retro-inset-faint);
 }
 
 
@@ -449,7 +448,7 @@ footer {
   margin-bottom: var(--retro-baseline);
   padding: 7px 14px;
   color: var(--retro-gray-dark);
-  text-shadow: 0 1px 0 rgb(255 255 255 / 0.5);
+  text-shadow: 0 1px 0 var(--retro-glow-soft);
   border-width: 1px;
   border-style: solid;
   border-radius: var(--retro-radius);
@@ -472,7 +471,7 @@ footer {
   /* Block messages: flat tinted panel, no gradient */
   &.block-message {
     background-image: none;
-    background-color: hsl(from var(--retro-warning) h s calc(l + 5));
+    background-color: var(--retro-block-warning-bg);
     padding: 14px;
     border-color: var(--retro-warning);
     box-shadow: none;
@@ -482,19 +481,19 @@ footer {
 
     &:is(.error, .danger, .success, .info) {
       color: var(--retro-gray-dark);
-      text-shadow: 0 1px 0 rgb(255 255 255 / 0.5);
+      text-shadow: 0 1px 0 var(--retro-glow-soft);
     }
     &:is(.error, .danger) {
-      background-color: hsl(from var(--retro-danger-soft) h s calc(l + 25));
-      border-color: hsl(from var(--retro-danger-soft) h s calc(l + 20));
+      background-color: var(--retro-block-danger-bg);
+      border-color: var(--retro-block-danger-border);
     }
     &.success {
-      background-color: hsl(from var(--retro-success) h s calc(l + 30));
-      border-color: hsl(from var(--retro-success) h s calc(l + 25));
+      background-color: var(--retro-block-success-bg);
+      border-color: var(--retro-block-success-border);
     }
     &.info {
-      background-color: hsl(from var(--retro-info-soft) h s calc(l + 25));
-      border-color: hsl(from var(--retro-info-soft) h s calc(l + 20));
+      background-color: var(--retro-block-info-bg);
+      border-color: var(--retro-block-info-border);
     }
   }
 }
@@ -506,16 +505,16 @@ footer {
   padding: 0;
   background: none;
   border: 0;
-  color: var(--retro-black);
+  color: var(--retro-ink);
   font-size: 20px;
   font-weight: bold;
   line-height: var(--retro-baseline);
-  text-shadow: 0 1px 0 var(--retro-white);
+  text-shadow: 0 1px 0 var(--retro-glow-solid);
   opacity: 0.2;
   cursor: pointer;
 
   &:hover {
-    color: var(--retro-black);
+    color: var(--retro-ink);
     text-decoration: none;
     opacity: 0.4;
   }
@@ -558,7 +557,7 @@ footer {
     }
   }
   & li.active a {
-    background-color: var(--retro-white);
+    background-color: var(--retro-field-bg);
     padding: 0 14px;
     border: 1px solid var(--retro-border);
     border-bottom: 0;
@@ -570,12 +569,12 @@ footer {
   & li a {
     margin: 5px 3px 5px 0;
     padding: 0 15px;
-    text-shadow: 0 1px 1px var(--retro-white);
+    text-shadow: 0 1px 1px var(--retro-glow-solid);
     line-height: 30px;
     border-radius: 15px;
 
     &:hover {
-      background: var(--retro-link-hover);
+      background: var(--retro-link-dark);
       color: var(--retro-white);
       text-decoration: none;
       text-shadow: 0 1px 1px rgb(0 0 0 / 0.25);
@@ -598,7 +597,7 @@ footer {
     width: fit-content;
     margin: 0;
     list-style: none;
-    border: 1px solid rgb(0 0 0 / 0.15);
+    border: 1px solid var(--retro-line);
     border-radius: var(--retro-radius-sm);
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
     overflow: hidden;
@@ -610,12 +609,12 @@ footer {
         display: block;
         padding: 0 14px;
         line-height: calc(var(--retro-baseline) * 2 - 2px);
-        border-right: 1px solid rgb(0 0 0 / 0.15);
+        border-right: 1px solid var(--retro-line);
         text-decoration: none;
       }
       & a:hover,
       &.active a {
-        background-color: hsl(from var(--retro-blue) h s calc(l + 45));
+        background-color: var(--retro-pager-bg);
       }
       &.disabled a,
       &.disabled a:hover {
@@ -665,7 +664,7 @@ footer {
   padding: 1px 9px 2px;
   font-size: 12px;
   border-radius: 9px;
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35), 0 1px 0 rgb(255 255 255 / 0.6);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35), 0 1px 0 var(--retro-bevel);
 }
 
 
@@ -674,7 +673,7 @@ footer {
    ========================================================================== */
 
 .modal-backdrop {
-  background-color: rgb(0 0 0 / 0.5);
+  background-color: var(--retro-backdrop);
   position: fixed;
   inset: 0;
   z-index: var(--retro-z-backdrop);
@@ -696,14 +695,14 @@ footer {
   transform: translate(-50%, -50%);
   overflow: auto;
   color: inherit;
-  background-color: var(--retro-white);
-  border: 1px solid rgb(0 0 0 / 0.3);
+  background-color: var(--retro-field-bg);
+  border: 1px solid var(--retro-line-strong);
   border-radius: var(--retro-radius-lg);
   box-shadow: var(--retro-shadow-pop);
   background-clip: padding-box;
 
   /* <dialog class="modal"> works natively; [open] controls visibility */
-  &::backdrop { background-color: rgb(0 0 0 / 0.5); }
+  &::backdrop { background-color: var(--retro-backdrop); }
 
   & .modal-header {
     border-bottom: 1px solid var(--retro-rule-light);
@@ -726,7 +725,7 @@ footer {
     padding: 14px 20px 15px;
     border-top: 1px solid var(--retro-rule);
     border-radius: 0 0 var(--retro-radius-lg) var(--retro-radius-lg);
-    box-shadow: inset 0 1px 0 var(--retro-white);
+    box-shadow: inset 0 1px 0 var(--retro-bevel-solid);
     margin-bottom: 0;
 
     & .btn {
@@ -758,7 +757,7 @@ footer {
     margin-left: -5px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 5px solid var(--retro-black);
+    border-top: 5px solid var(--retro-tip-bg);
   }
   &.left .twipsy-arrow {
     top: 50%;
@@ -766,7 +765,7 @@ footer {
     margin-top: -5px;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid var(--retro-black);
+    border-left: 5px solid var(--retro-tip-bg);
   }
   &.below .twipsy-arrow {
     top: 0;
@@ -774,7 +773,7 @@ footer {
     margin-left: -5px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-bottom: 5px solid var(--retro-black);
+    border-bottom: 5px solid var(--retro-tip-bg);
   }
   &.right .twipsy-arrow {
     top: 50%;
@@ -782,13 +781,13 @@ footer {
     margin-top: -5px;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-right: 5px solid var(--retro-black);
+    border-right: 5px solid var(--retro-tip-bg);
   }
 
   & .twipsy-inner {
     padding: 3px 8px;
-    background-color: var(--retro-black);
-    color: var(--retro-white);
+    background-color: var(--retro-tip-bg);
+    color: var(--retro-tip-text);
     text-align: center;
     max-width: 200px;
     text-decoration: none;
@@ -857,7 +856,7 @@ footer {
     overflow: hidden;
     width: 280px;
     border-radius: var(--retro-radius-lg);
-    box-shadow: var(--retro-shadow-pop);
+    box-shadow: var(--retro-shadow-pop), 0 0 0 1px var(--retro-line-faint);
   }
   & .title {
     background-color: var(--retro-surface);
@@ -867,7 +866,7 @@ footer {
     border-bottom: 1px solid var(--retro-rule-light);
   }
   & .content {
-    background-color: var(--retro-white);
+    background-color: var(--retro-field-bg);
     padding: 14px;
     border-radius: 0 0 var(--retro-radius-sm) var(--retro-radius-sm);
     background-clip: padding-box;

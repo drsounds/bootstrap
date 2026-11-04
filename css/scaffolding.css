@@ -76,7 +76,7 @@
 }
 
 /* Structural layout */
-html, body { background-color: var(--retro-white); }
+html, body { background-color: var(--retro-bg); }
 
 body {
   margin: 0;
@@ -120,7 +120,7 @@ body {
 
 /* Links */
 a {
-  color: var(--retro-link);
+  color: var(--retro-link-text);
   text-decoration: none;
   line-height: inherit;
   font-weight: inherit;

@@ -51,6 +51,17 @@ Re-theme at runtime by changing tokens on `:root`; derived colors (hover, tints,
     document.documentElement.style.setProperty('--retro-primary', '#ff6600');
     document.documentElement.style.setProperty('--retro-primary-dark', '#aa3300');
 
+Light and dark modes: surfaces, text, lines, bevels and shadows are `light-dark()` tokens, so the whole framework switches with the color scheme. By default it follows the OS (`prefers-color-scheme`); pin a mode with `data-theme` on `<html>` or on any container (a scoped dark panel on a light page works too):
+
+    <html data-theme="dark">     <!-- "light" | "dark"; omit to follow the system -->
+
+Brand color: to drive the whole blue family from one value, opt in to derived mode and set only `--retro-primary`. The dark gradient stop, focus glow, link color and pagination tint are then derived from it (and adapt to light/dark):
+
+    <html data-retro-brand="derived">
+    document.documentElement.style.setProperty('--retro-primary', '#2e8b57');
+
+Without `data-retro-brand="derived"` the original Bootstrap 1.1.1 hex values are used exactly.
+
 Open `retrostrap-demo.html` for every component plus a live theme editor.
 
 

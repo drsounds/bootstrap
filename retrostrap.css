@@ -98,29 +98,74 @@ textarea { overflow: auto; vertical-align: top; }
    Every colour, font and metric is a --retro-* custom property on :root.
    Derived values use relative color syntax and color-mix(), so changing a
    base token at runtime re-themes everything.
+
+   LIGHT / DARK
+   Surfaces, text, lines and shadows are defined with light-dark(), so the
+   same tokens resolve differently per colour scheme:
+     - default:                 follows the OS (prefers-color-scheme)
+     - data-theme="light"       forces light (on <html> or any container)
+     - data-theme="dark"        forces dark  (on <html> or any container)
+   Setting a token inline on :root (e.g. --retro-primary) applies to both modes.
    ========================================================================== */
 
 :root {
-  /* Neutrals: lighten(#000, 25/50/75/90%) */
+  color-scheme: light dark;
+}
+[data-theme="light"] { color-scheme: light; }
+[data-theme="dark"] { color-scheme: dark; }
+
+/* A scoped theme (e.g. a dark panel on a light page) needs its own paint */
+[data-theme]:not(:root) {
+  background-color: var(--retro-bg);
+  color: var(--retro-gray);
+}
+
+:root {
+  /* Ink: fixed colours for text on coloured fills and for glyphs */
   --retro-black: #000;
   --retro-white: #fff;
-  --retro-gray-dark: color-mix(in srgb, var(--retro-black) 75%, var(--retro-white));
-  --retro-gray: color-mix(in srgb, var(--retro-black) 50%, var(--retro-white));
-  --retro-gray-light: color-mix(in srgb, var(--retro-black) 25%, var(--retro-white));
-  --retro-gray-lighter: color-mix(in srgb, var(--retro-black) 10%, var(--retro-white));
+  /* Ink that flips with the scheme (close buttons, sort arrows) */
+  --retro-ink: light-dark(#000, #fff);
+
+  /* Neutrals. Light: lighten(#000, 25/50/75/90%) */
+  --retro-gray-dark: light-dark(color-mix(in srgb, var(--retro-black) 75%, var(--retro-white)), #eceef1);
+  --retro-gray: light-dark(color-mix(in srgb, var(--retro-black) 50%, var(--retro-white)), #b4b9c0);
+  --retro-gray-light: light-dark(color-mix(in srgb, var(--retro-black) 25%, var(--retro-white)), #7c828a);
+  --retro-gray-lighter: light-dark(color-mix(in srgb, var(--retro-black) 10%, var(--retro-white)), #3a3e44);
+
+  /* Surfaces */
+  --retro-bg: light-dark(#fff, #1a1c1f);
+  --retro-field-bg: light-dark(#fff, #23262a);
+  --retro-surface: light-dark(#f5f5f5, #2a2d32);
+  --retro-stripe: light-dark(#f9f9f9, #212428);
 
   /* Hard-coded greys from the original source, named */
-  --retro-border: #ccc;
-  --retro-border-dark: #bbb;
-  --retro-rule: #ddd;
-  --retro-rule-light: #eee;
-  --retro-surface: #f5f5f5;
-  --retro-stripe: #f9f9f9;
-  --retro-text-btn: #333;
+  --retro-border: light-dark(#ccc, #4a4f57);
+  --retro-border-dark: light-dark(#bbb, #5a606a);
+  --retro-rule: light-dark(#ddd, #3a3e44);
+  --retro-rule-light: light-dark(#eee, #30343a);
+  --retro-text-btn: light-dark(#333, #e8eaed);
 
-  /* Links */
+  /* Translucent lines and bevels */
+  --retro-line: light-dark(rgb(0 0 0 / 0.15), rgb(255 255 255 / 0.14));
+  --retro-line-strong: light-dark(rgb(0 0 0 / 0.3), rgb(255 255 255 / 0.22));
+  --retro-line-faint: light-dark(rgb(0 0 0 / 0.05), rgb(255 255 255 / 0.07));
+  --retro-bevel: light-dark(rgb(255 255 255 / 0.5), rgb(255 255 255 / 0.06));
+  --retro-bevel-solid: light-dark(#fff, rgb(255 255 255 / 0.07));
+
+  /* Text "engraving": a white glow on light, a dark drop on dark */
+  --retro-glow: light-dark(rgb(255 255 255 / 0.75), rgb(0 0 0 / 0.6));
+  --retro-glow-solid: light-dark(#fff, rgb(0 0 0 / 0.6));
+  --retro-glow-soft: light-dark(rgb(255 255 255 / 0.5), rgb(0 0 0 / 0.5));
+
+  /* Links. --retro-link is the base; text and hover colours adapt to the scheme */
   --retro-link: #0069d6;
-  --retro-link-hover: hsl(from var(--retro-link) h s calc(l - 10));
+  --retro-link-dark: hsl(from var(--retro-link) h s calc(l - 10));
+  --retro-link-text: light-dark(var(--retro-link), hsl(from var(--retro-link) h s max(calc(l + 22), 62)));
+  --retro-link-hover: light-dark(
+    hsl(from var(--retro-link) h s calc(l - 10)),
+    hsl(from var(--retro-link) h s max(calc(l + 32), 74))
+  );
 
   /* Accent palette */
   --retro-blue: #049cdb;
@@ -132,7 +177,7 @@ textarea { overflow: auto; vertical-align: top; }
   --retro-pink: #c3325f;
   --retro-purple: #7a43b6;
 
-  /* Semantic colours: *-top / *-dark are the two stops of the 2011 gradient bar */
+  /* Semantic colours: the two stops of the 2011 gradient bar */
   --retro-primary: var(--retro-blue);
   --retro-primary-dark: var(--retro-blue-dark);
   --retro-success: #62c462;
@@ -141,26 +186,50 @@ textarea { overflow: auto; vertical-align: top; }
   --retro-danger-dark: #c43c35;
   --retro-info: #5bc0de;
   --retro-info-dark: #339bb9;
-  --retro-warning: #fceec1;
-  --retro-warning-dark: #eedc94;
+  --retro-warning: light-dark(#fceec1, #6e5a1d);
+  --retro-warning-dark: light-dark(#eedc94, #574716);
 
   /* Base tints used by block messages (the original used slightly different seeds) */
   --retro-danger-soft: #f56a66;
   --retro-info-soft: #6bd0ee;
 
-  /* Neutral ("secondary") button gradient: the default 1.1 button */
-  --retro-secondary: var(--retro-white);
+  /* Block messages: pale tints on light, deep tints on dark */
+  --retro-block-warning-bg: light-dark(hsl(from var(--retro-warning) h s calc(l + 5)), hsl(from var(--retro-warning) h s calc(l - 6)));
+  --retro-block-danger-bg: light-dark(hsl(from var(--retro-danger-soft) h s calc(l + 25)), hsl(from var(--retro-danger-soft) h calc(s - 35) calc(l - 40)));
+  --retro-block-danger-border: light-dark(hsl(from var(--retro-danger-soft) h s calc(l + 20)), hsl(from var(--retro-danger-soft) h calc(s - 30) calc(l - 30)));
+  --retro-block-success-bg: light-dark(hsl(from var(--retro-success) h s calc(l + 30)), hsl(from var(--retro-success) h calc(s - 25) calc(l - 35)));
+  --retro-block-success-border: light-dark(hsl(from var(--retro-success) h s calc(l + 25)), hsl(from var(--retro-success) h calc(s - 20) calc(l - 28)));
+  --retro-block-info-bg: light-dark(hsl(from var(--retro-info-soft) h s calc(l + 25)), hsl(from var(--retro-info-soft) h calc(s - 35) calc(l - 40)));
+  --retro-block-info-border: light-dark(hsl(from var(--retro-info-soft) h s calc(l + 20)), hsl(from var(--retro-info-soft) h calc(s - 30) calc(l - 30)));
+
+  /* Default ("secondary") button: white-to-grey bevel on light, slate on dark */
+  --retro-btn-top: light-dark(var(--retro-white), #4b4f56);
+  --retro-btn-bottom: hsl(from var(--retro-btn-top) h s calc(l - 10));
+  --retro-btn-border: light-dark(#ccc, #101214);
+  --retro-btn-border-bottom: light-dark(#bbb, #08090a);
+  --retro-secondary: var(--retro-btn-top);
   --retro-secondary-dark: hsl(from var(--retro-secondary) h s calc(l - 10));
 
   /* Focus */
   --retro-focus: #52a8ec;
-  --retro-focus-ring: var(--retro-blue-dark);
+  --retro-focus-ring: light-dark(var(--retro-primary-dark), var(--retro-primary));
 
   /* Form error shades */
-  --retro-error-bg: hsl(from var(--retro-red) h s calc(l + 57));
-  --retro-error-bg-addon: hsl(from var(--retro-red) h s calc(l + 50));
+  --retro-error-fg: light-dark(var(--retro-red), hsl(from var(--retro-red) h s calc(l + 30)));
+  --retro-error-bg: light-dark(hsl(from var(--retro-red) h s calc(l + 57)), hsl(from var(--retro-red) h s calc(l - 22)));
+  --retro-error-bg-addon: light-dark(hsl(from var(--retro-red) h s calc(l + 50)), hsl(from var(--retro-red) h s calc(l - 14)));
   --retro-error-text: hsl(from var(--retro-red) h calc(s - 25) calc(l + 25));
-  --retro-error-text-dark: hsl(from var(--retro-red) h calc(s - 25) calc(l + 15));
+  --retro-error-text-dark: light-dark(
+    hsl(from var(--retro-red) h calc(s - 25) calc(l + 15)),
+    hsl(from var(--retro-red) h calc(s - 25) calc(l + 30))
+  );
+
+  /* Code */
+  --retro-code-bg: light-dark(hsl(from var(--retro-orange) h s calc(l + 40)), hsl(from var(--retro-orange) h s calc(l - 30)));
+  --retro-code-fg: light-dark(rgb(0 0 0 / 0.75), rgb(255 255 255 / 0.85));
+
+  /* Pagination hover/active segment */
+  --retro-pager-bg: light-dark(hsl(from var(--retro-blue) h s calc(l + 45)), hsl(from var(--retro-blue) h s calc(l - 22)));
 
   /* Colour scheme helpers (spin()) for theme authors */
   --retro-base-color: var(--retro-blue);
@@ -174,14 +243,20 @@ textarea { overflow: auto; vertical-align: top; }
   --retro-analog1: hsl(from var(--retro-base-color) calc(h + 22) s l);
   --retro-analog2: hsl(from var(--retro-base-color) calc(h - 22) s l);
 
-  /* Default button */
-  --retro-btn-top: var(--retro-white);
-  --retro-btn-bottom: hsl(from var(--retro-btn-top) h s calc(l - 10));
-
-  /* Topbar */
-  --retro-topbar-top: #333;
-  --retro-topbar-bottom: #222;
+  /* Topbar: stays a dark bar in both schemes, a touch deeper in dark mode */
+  --retro-topbar-top: light-dark(#333, #2b2e32);
+  --retro-topbar-bottom: light-dark(#222, #18191c);
+  --retro-topbar-text: #bfbfbf;
+  --retro-topbar-placeholder: #e6e6e6;
+  --retro-topbar-menu-text: #bbb;
+  --retro-topbar-section: #808080;
+  --retro-topbar-focus-bg: #fff;
+  --retro-topbar-focus-text: #404040;
   --retro-topbar-height: 40px;
+
+  /* Tooltips invert against the page: black on light, pale on dark */
+  --retro-tip-bg: light-dark(#000, #e8eaed);
+  --retro-tip-text: light-dark(#fff, #14161a);
 
   /* Typography */
   --retro-font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -196,9 +271,14 @@ textarea { overflow: auto; vertical-align: top; }
   --retro-radius-lg: 6px;
 
   /* Shadows */
-  --retro-shadow-input: inset 0 1px 3px rgb(0 0 0 / 0.1);
-  --retro-shadow-uneditable: inset 0 1px 2px rgb(0 0 0 / 0.075);
-  --retro-shadow-pop: 0 3px 7px rgb(0 0 0 / 0.3);
+  --retro-inset: light-dark(rgb(0 0 0 / 0.1), rgb(0 0 0 / 0.45));
+  --retro-inset-soft: light-dark(rgb(0 0 0 / 0.075), rgb(0 0 0 / 0.4));
+  --retro-inset-faint: light-dark(rgb(0 0 0 / 0.05), rgb(0 0 0 / 0.3));
+  --retro-shadow-color: light-dark(rgb(0 0 0 / 0.3), rgb(0 0 0 / 0.6));
+  --retro-shadow-input: inset 0 1px 3px var(--retro-inset);
+  --retro-shadow-uneditable: inset 0 1px 2px var(--retro-inset-soft);
+  --retro-shadow-pop: 0 3px 7px var(--retro-shadow-color);
+  --retro-backdrop: light-dark(rgb(0 0 0 / 0.5), rgb(0 0 0 / 0.7));
 
   /* Grid: 16 columns x 40px + 15 gutters x 20px = 940px */
   --retro-grid-columns: 16;
@@ -215,6 +295,20 @@ textarea { overflow: auto; vertical-align: top; }
   --retro-z-backdrop: 1000;
   --retro-z-modal: 2000;
   --retro-z-topbar: 10000;
+}
+
+/* BRAND: opt-in, derive the whole blue family from --retro-primary alone.
+   Add data-retro-brand="derived" to <html>, then set --retro-primary to any
+   colour. The hue/saturation/lightness offsets are the ones that map the
+   original #049cdb to #0064cd (dark stop) and #52a8ec (focus glow). */
+[data-retro-brand="derived"] {
+  --retro-primary-dark: hsl(from var(--retro-primary) calc(h + 13) calc(s + 4) calc(l - 4));
+  --retro-focus: hsl(from var(--retro-primary) calc(h + 10) calc(s - 14) calc(l + 18));
+  --retro-link: var(--retro-primary-dark);
+  --retro-pager-bg: light-dark(
+    hsl(from var(--retro-primary) h s calc(l + 45)),
+    hsl(from var(--retro-primary) h s calc(l - 22))
+  );
 }
 
 
@@ -296,7 +390,7 @@ textarea { overflow: auto; vertical-align: top; }
 }
 
 /* Structural layout */
-html, body { background-color: var(--retro-white); }
+html, body { background-color: var(--retro-bg); }
 
 body {
   margin: 0;
@@ -340,7 +434,7 @@ body {
 
 /* Links */
 a {
-  color: var(--retro-link);
+  color: var(--retro-link-text);
   text-decoration: none;
   line-height: inherit;
   font-weight: inherit;
@@ -485,8 +579,8 @@ code, pre {
   border-radius: var(--retro-radius-sm);
 }
 code {
-  background-color: hsl(from var(--retro-orange) h s calc(l + 40));
-  color: rgb(0 0 0 / 0.75);
+  background-color: var(--retro-code-bg);
+  color: var(--retro-code-fg);
   padding: 1px 3px;
 }
 pre {
@@ -496,7 +590,7 @@ pre {
   background-color: var(--retro-surface);
   line-height: var(--retro-baseline);
   font-size: 12px;
-  border: 1px solid rgb(0 0 0 / 0.15);
+  border: 1px solid var(--retro-line);
   border-radius: var(--retro-radius-sm);
   white-space: pre-wrap;
   word-wrap: break-word;
@@ -567,7 +661,7 @@ input[type="radio"] {
   line-height: var(--retro-baseline);
   height: var(--retro-baseline);
   color: var(--retro-gray);
-  background-color: var(--retro-white);
+  background-color: var(--retro-field-bg);
   border: 1px solid var(--retro-border);
   border-radius: var(--retro-radius-sm);
 }
@@ -623,7 +717,7 @@ form div.error {
   & > label,
   & span.help-inline,
   & span.help-block {
-    color: var(--retro-red);
+    color: var(--retro-error-fg);
   }
 
   & :is(input:not([type]), input[type="text"], input[type="password"], input[type="email"],
@@ -739,7 +833,7 @@ input.disabled,
     line-height: 18px;
     height: 18px;
     text-align: center;
-    text-shadow: 0 1px 0 var(--retro-white);
+    text-shadow: 0 1px 0 var(--retro-glow-solid);
     border: 1px solid var(--retro-border);
     border-right-width: 0;
     border-radius: var(--retro-radius-sm) 0 0 var(--retro-radius-sm);
@@ -891,7 +985,7 @@ table {
       margin-top: 7px;
       border-width: 0 4px 4px;
       border-style: solid;
-      border-color: var(--retro-black) transparent;
+      border-color: var(--retro-ink) transparent;
       visibility: hidden;
     }
     &:hover::after { visibility: visible; }
@@ -900,7 +994,7 @@ table {
   & .headerSortUp,
   & .headerSortDown {
     background-color: color-mix(in srgb, rgb(141 192 219) 25%, transparent);
-    text-shadow: 0 1px 1px rgb(255 255 255 / 0.75);
+    text-shadow: 0 1px 1px var(--retro-glow);
     border-radius: var(--retro-radius-sm) var(--retro-radius-sm) 0 0;
   }
   & .headerSortDown::after,
@@ -912,7 +1006,7 @@ table {
     border-bottom: none;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-top: 4px solid var(--retro-black);
+    border-top: 4px solid var(--retro-ink);
     visibility: visible;
     opacity: 0.6;
   }
@@ -924,7 +1018,7 @@ table {
   border-collapse: separate;
   border-left: 0;
   border-radius: var(--retro-radius);
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.5);
+  box-shadow: inset 0 1px 0 var(--retro-bevel);
 
   & th + th,
   & td + td,
@@ -946,14 +1040,15 @@ table {
   & th { padding-top: 4px; }
 }
 
-/* Coloured table headings */
+/* Coloured table headings. Tints are pale on light and deep on dark;
+   red and purple text is lifted on dark for contrast. */
 table {
-  & .blue  { --_th: var(--retro-blue);   --_th-tint: hsl(from var(--retro-blue) h s calc(l + 40)); }
-  & .green { --_th: var(--retro-green);  --_th-tint: hsl(from var(--retro-green) h s calc(l + 40)); }
-  & .red   { --_th: var(--retro-red);    --_th-tint: hsl(from var(--retro-red) h s calc(l + 50)); }
-  & .yellow{ --_th: var(--retro-yellow); --_th-tint: hsl(from var(--retro-yellow) h s calc(l + 40)); }
-  & .orange{ --_th: var(--retro-orange); --_th-tint: hsl(from var(--retro-orange) h s calc(l + 40)); }
-  & .purple{ --_th: var(--retro-purple); --_th-tint: hsl(from var(--retro-purple) h s calc(l + 40)); }
+  & .blue  { --_th: var(--retro-blue);   --_th-tint: light-dark(hsl(from var(--retro-blue) h s calc(l + 40)), hsl(from var(--retro-blue) h s calc(l - 25))); }
+  & .green { --_th: var(--retro-green);  --_th-tint: light-dark(hsl(from var(--retro-green) h s calc(l + 40)), hsl(from var(--retro-green) h s calc(l - 25))); }
+  & .red   { --_th: var(--retro-error-fg); --_th-tint: light-dark(hsl(from var(--retro-red) h s calc(l + 50)), hsl(from var(--retro-red) h s calc(l - 12))); }
+  & .yellow{ --_th: var(--retro-yellow); --_th-tint: light-dark(hsl(from var(--retro-yellow) h s calc(l + 40)), hsl(from var(--retro-yellow) h s calc(l - 40))); }
+  & .orange{ --_th: var(--retro-orange); --_th-tint: light-dark(hsl(from var(--retro-orange) h s calc(l + 40)), hsl(from var(--retro-orange) h s calc(l - 30))); }
+  & .purple{ --_th: light-dark(var(--retro-purple), hsl(from var(--retro-purple) h s calc(l + 20))); --_th-tint: light-dark(hsl(from var(--retro-purple) h s calc(l + 40)), hsl(from var(--retro-purple) h s calc(l - 20))); }
 
   & :is(.blue, .green, .red, .yellow, .orange, .purple) {
     color: var(--_th);
@@ -1035,12 +1130,12 @@ table {
     to bottom, var(--retro-btn-top), var(--retro-btn-top) 25%, var(--retro-btn-bottom)
   );
   padding: 5px 14px 6px;
-  text-shadow: 0 1px 1px rgb(255 255 255 / 0.75);
+  text-shadow: 0 1px 1px var(--retro-glow);
   color: var(--retro-text-btn);
   font-size: var(--retro-font-base);
   line-height: normal;
-  border: 1px solid var(--retro-border);
-  border-bottom-color: var(--retro-border-dark);
+  border: 1px solid var(--retro-btn-border);
+  border-bottom-color: var(--retro-btn-border-bottom);
   border-radius: var(--retro-radius);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.2), 0 1px 2px rgb(0 0 0 / 0.05);
   transition: 0.1s linear all;
@@ -1136,7 +1231,7 @@ input[type="submit"].btn::-moz-focus-inner {
   }
 
   & a {
-    color: var(--retro-gray-light);
+    color: var(--retro-topbar-text);
     text-shadow: 0 -1px 0 rgb(0 0 0 / 0.25);
 
     &:focus-visible {
@@ -1187,7 +1282,7 @@ input[type="submit"].btn::-moz-focus-inner {
       box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.1), 0 1px 0 rgb(255 255 255 / 0.25);
       transition: none;
 
-      &::placeholder { color: var(--retro-gray-lighter); }
+      &::placeholder { color: var(--retro-topbar-placeholder); }
 
       &:hover {
         background-color: rgb(255 255 255 / 0.5);
@@ -1196,9 +1291,9 @@ input[type="submit"].btn::-moz-focus-inner {
       &:focus,
       &.focused {
         outline: 2px solid transparent;
-        background-color: var(--retro-white);
-        color: var(--retro-gray-dark);
-        text-shadow: 0 1px 0 var(--retro-white);
+        background-color: var(--retro-topbar-focus-bg);
+        color: var(--retro-topbar-focus-text);
+        text-shadow: 0 1px 0 var(--retro-topbar-focus-bg);
         border: 0;
         padding: 5px 10px;
         box-shadow: 0 0 3px rgb(0 0 0 / 0.15);
@@ -1320,7 +1415,7 @@ input[type="submit"].btn::-moz-focus-inner {
           clear: both;
           font-weight: normal;
           line-height: 19px;
-          color: var(--retro-border-dark);
+          color: var(--retro-topbar-menu-text);
 
           &:hover {
             background-color: rgb(255 255 255 / 0.25);
@@ -1344,8 +1439,7 @@ input[type="submit"].btn::-moz-focus-inner {
           background: rgb(0 0 0 / 0.2);
           padding: 6px 15px;
           cursor: default;
-          color: var(--retro-gray);
-          border-top: 1px solid rgb(0 0 0 / 0.2);
+          color: var(--retro-topbar-section);
         }
       }
     }
@@ -1386,7 +1480,7 @@ footer {
 .page-header {
   margin-bottom: calc(var(--retro-baseline) - 1px);
   border-bottom: 1px solid var(--retro-rule);
-  box-shadow: 0 1px 0 rgb(255 255 255 / 0.5);
+  box-shadow: 0 1px 0 var(--retro-bevel);
 
   & h1 { margin-bottom: calc(var(--retro-baseline) / 2 - 1px); }
 }
@@ -1397,9 +1491,9 @@ footer {
   margin-bottom: 20px;
   padding: 19px;
   min-height: 20px;
-  border: 1px solid rgb(0 0 0 / 0.05);
+  border: 1px solid var(--retro-line-faint);
   border-radius: var(--retro-radius);
-  box-shadow: inset 0 1px 1px rgb(0 0 0 / 0.05);
+  box-shadow: inset 0 1px 1px var(--retro-inset-faint);
 }
 
 
@@ -1415,7 +1509,7 @@ footer {
   margin-bottom: var(--retro-baseline);
   padding: 7px 14px;
   color: var(--retro-gray-dark);
-  text-shadow: 0 1px 0 rgb(255 255 255 / 0.5);
+  text-shadow: 0 1px 0 var(--retro-glow-soft);
   border-width: 1px;
   border-style: solid;
   border-radius: var(--retro-radius);
@@ -1438,7 +1532,7 @@ footer {
   /* Block messages: flat tinted panel, no gradient */
   &.block-message {
     background-image: none;
-    background-color: hsl(from var(--retro-warning) h s calc(l + 5));
+    background-color: var(--retro-block-warning-bg);
     padding: 14px;
     border-color: var(--retro-warning);
     box-shadow: none;
@@ -1448,19 +1542,19 @@ footer {
 
     &:is(.error, .danger, .success, .info) {
       color: var(--retro-gray-dark);
-      text-shadow: 0 1px 0 rgb(255 255 255 / 0.5);
+      text-shadow: 0 1px 0 var(--retro-glow-soft);
     }
     &:is(.error, .danger) {
-      background-color: hsl(from var(--retro-danger-soft) h s calc(l + 25));
-      border-color: hsl(from var(--retro-danger-soft) h s calc(l + 20));
+      background-color: var(--retro-block-danger-bg);
+      border-color: var(--retro-block-danger-border);
     }
     &.success {
-      background-color: hsl(from var(--retro-success) h s calc(l + 30));
-      border-color: hsl(from var(--retro-success) h s calc(l + 25));
+      background-color: var(--retro-block-success-bg);
+      border-color: var(--retro-block-success-border);
     }
     &.info {
-      background-color: hsl(from var(--retro-info-soft) h s calc(l + 25));
-      border-color: hsl(from var(--retro-info-soft) h s calc(l + 20));
+      background-color: var(--retro-block-info-bg);
+      border-color: var(--retro-block-info-border);
     }
   }
 }
@@ -1472,16 +1566,16 @@ footer {
   padding: 0;
   background: none;
   border: 0;
-  color: var(--retro-black);
+  color: var(--retro-ink);
   font-size: 20px;
   font-weight: bold;
   line-height: var(--retro-baseline);
-  text-shadow: 0 1px 0 var(--retro-white);
+  text-shadow: 0 1px 0 var(--retro-glow-solid);
   opacity: 0.2;
   cursor: pointer;
 
   &:hover {
-    color: var(--retro-black);
+    color: var(--retro-ink);
     text-decoration: none;
     opacity: 0.4;
   }
@@ -1524,7 +1618,7 @@ footer {
     }
   }
   & li.active a {
-    background-color: var(--retro-white);
+    background-color: var(--retro-field-bg);
     padding: 0 14px;
     border: 1px solid var(--retro-border);
     border-bottom: 0;
@@ -1536,12 +1630,12 @@ footer {
   & li a {
     margin: 5px 3px 5px 0;
     padding: 0 15px;
-    text-shadow: 0 1px 1px var(--retro-white);
+    text-shadow: 0 1px 1px var(--retro-glow-solid);
     line-height: 30px;
     border-radius: 15px;
 
     &:hover {
-      background: var(--retro-link-hover);
+      background: var(--retro-link-dark);
       color: var(--retro-white);
       text-decoration: none;
       text-shadow: 0 1px 1px rgb(0 0 0 / 0.25);
@@ -1564,7 +1658,7 @@ footer {
     width: fit-content;
     margin: 0;
     list-style: none;
-    border: 1px solid rgb(0 0 0 / 0.15);
+    border: 1px solid var(--retro-line);
     border-radius: var(--retro-radius-sm);
     box-shadow: 0 1px 2px rgb(0 0 0 / 0.05);
     overflow: hidden;
@@ -1576,12 +1670,12 @@ footer {
         display: block;
         padding: 0 14px;
         line-height: calc(var(--retro-baseline) * 2 - 2px);
-        border-right: 1px solid rgb(0 0 0 / 0.15);
+        border-right: 1px solid var(--retro-line);
         text-decoration: none;
       }
       & a:hover,
       &.active a {
-        background-color: hsl(from var(--retro-blue) h s calc(l + 45));
+        background-color: var(--retro-pager-bg);
       }
       &.disabled a,
       &.disabled a:hover {
@@ -1631,7 +1725,7 @@ footer {
   padding: 1px 9px 2px;
   font-size: 12px;
   border-radius: 9px;
-  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35), 0 1px 0 rgb(255 255 255 / 0.6);
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.35), 0 1px 0 var(--retro-bevel);
 }
 
 
@@ -1640,7 +1734,7 @@ footer {
    ========================================================================== */
 
 .modal-backdrop {
-  background-color: rgb(0 0 0 / 0.5);
+  background-color: var(--retro-backdrop);
   position: fixed;
   inset: 0;
   z-index: var(--retro-z-backdrop);
@@ -1662,14 +1756,14 @@ footer {
   transform: translate(-50%, -50%);
   overflow: auto;
   color: inherit;
-  background-color: var(--retro-white);
-  border: 1px solid rgb(0 0 0 / 0.3);
+  background-color: var(--retro-field-bg);
+  border: 1px solid var(--retro-line-strong);
   border-radius: var(--retro-radius-lg);
   box-shadow: var(--retro-shadow-pop);
   background-clip: padding-box;
 
   /* <dialog class="modal"> works natively; [open] controls visibility */
-  &::backdrop { background-color: rgb(0 0 0 / 0.5); }
+  &::backdrop { background-color: var(--retro-backdrop); }
 
   & .modal-header {
     border-bottom: 1px solid var(--retro-rule-light);
@@ -1692,7 +1786,7 @@ footer {
     padding: 14px 20px 15px;
     border-top: 1px solid var(--retro-rule);
     border-radius: 0 0 var(--retro-radius-lg) var(--retro-radius-lg);
-    box-shadow: inset 0 1px 0 var(--retro-white);
+    box-shadow: inset 0 1px 0 var(--retro-bevel-solid);
     margin-bottom: 0;
 
     & .btn {
@@ -1724,7 +1818,7 @@ footer {
     margin-left: -5px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-top: 5px solid var(--retro-black);
+    border-top: 5px solid var(--retro-tip-bg);
   }
   &.left .twipsy-arrow {
     top: 50%;
@@ -1732,7 +1826,7 @@ footer {
     margin-top: -5px;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-left: 5px solid var(--retro-black);
+    border-left: 5px solid var(--retro-tip-bg);
   }
   &.below .twipsy-arrow {
     top: 0;
@@ -1740,7 +1834,7 @@ footer {
     margin-left: -5px;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-bottom: 5px solid var(--retro-black);
+    border-bottom: 5px solid var(--retro-tip-bg);
   }
   &.right .twipsy-arrow {
     top: 50%;
@@ -1748,13 +1842,13 @@ footer {
     margin-top: -5px;
     border-top: 5px solid transparent;
     border-bottom: 5px solid transparent;
-    border-right: 5px solid var(--retro-black);
+    border-right: 5px solid var(--retro-tip-bg);
   }
 
   & .twipsy-inner {
     padding: 3px 8px;
-    background-color: var(--retro-black);
-    color: var(--retro-white);
+    background-color: var(--retro-tip-bg);
+    color: var(--retro-tip-text);
     text-align: center;
     max-width: 200px;
     text-decoration: none;
@@ -1823,7 +1917,7 @@ footer {
     overflow: hidden;
     width: 280px;
     border-radius: var(--retro-radius-lg);
-    box-shadow: var(--retro-shadow-pop);
+    box-shadow: var(--retro-shadow-pop), 0 0 0 1px var(--retro-line-faint);
   }
   & .title {
     background-color: var(--retro-surface);
@@ -1833,7 +1927,7 @@ footer {
     border-bottom: 1px solid var(--retro-rule-light);
   }
   & .content {
-    background-color: var(--retro-white);
+    background-color: var(--retro-field-bg);
     padding: 14px;
     border-radius: 0 0 var(--retro-radius-sm) var(--retro-radius-sm);
     background-clip: padding-box;

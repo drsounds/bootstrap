@@ -4,15 +4,30 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Retrostrap demo</title>
+  <script>
+    /* Apply the saved theme before first paint to avoid a flash */
+    try {
+      const html = document.documentElement;
+      const mode = localStorage.getItem('retro-mode');
+      const brand = localStorage.getItem('retro-brand');
+      if (mode === 'light' || mode === 'dark') html.dataset.theme = mode;
+      if (brand) { html.dataset.retroBrand = 'derived'; html.style.setProperty('--retro-primary', brand); }
+    } catch (e) {}
+  </script>
   <link rel="stylesheet" href="retrostrap.css">
   <style>
     body { padding-top: 60px; }
-    .swatch { width: 60px; padding: 2px; height: 28px; }
+    .swatch { width: 60px; padding: 2px; height: 28px; cursor: pointer; }
+    .hex { font-family: var(--retro-font-mono); }
     section { margin-bottom: 36px; }
-    .demo-row div[class*="span"] { background: #dfeffc; text-align: center; line-height: 24px; margin-bottom: 10px; }
+    .demo-row div[class*="span"] { background: color-mix(in srgb, var(--retro-primary) 14%, var(--retro-bg)); text-align: center; line-height: 24px; margin-bottom: 10px; }
     .static { position: relative; top: auto; left: auto; transform: none; margin: 0 0 18px; }
     .popover.static-pop { display: block; position: relative; width: 300px; margin-bottom: 18px; }
     .twipsy.static-tip { position: relative; display: block; width: 140px; margin: 0 0 18px; }
+    .mode-group { display: inline-flex; }
+    .mode-group .btn { border-radius: 0; margin-left: -1px; }
+    .mode-group .btn:first-child { border-radius: 4px 0 0 4px; margin-left: 0; }
+    .mode-group .btn:last-child { border-radius: 0 4px 4px 0; }
   </style>
 </head>
 <body>
@@ -38,6 +53,7 @@
       <form action=""><input type="text" placeholder="Search"></form>
       <ul class="secondary-nav">
         <li><a href="#theme">Theme</a></li>
+        <li><a href="#" id="mode-toggle" role="button" aria-pressed="false">Dark</a></li>
       </ul>
     </div>
   </div>
@@ -52,15 +68,27 @@
   </div>
 
   <section id="theme">
-    <div class="page-header"><h1>Live theme <small>edit :root at runtime</small></h1></div>
+    <div class="page-header"><h1>Live theme <small>brand colour and light / dark mode</small></h1></div>
     <div class="well">
-      <label for="t-primary">Primary</label>
-      <div class="input"><input class="swatch" id="t-primary" type="color" value="#049cdb">
-        <input class="swatch" id="t-primary-dark" type="color" value="#0064cd" aria-label="Primary dark">
-        <input class="swatch" id="t-link" type="color" value="#0069d6" aria-label="Link">
-        <input class="swatch" id="t-red" type="color" value="#9d261d" aria-label="Error red">
-        <button class="btn small" type="button" id="t-reset">Reset</button>
-        <span class="help-inline">primary / primary-dark / link / red</span>
+      <div class="clearfix">
+        <label for="t-brand">Brand primary</label>
+        <div class="input">
+          <input class="swatch" id="t-brand" type="color" value="#049cdb">
+          <span class="help-inline hex" id="t-brand-hex">#049cdb</span>
+          <button class="btn small" type="button" id="t-brand-reset">Reset</button>
+          <span class="help-block">Sets <code>--retro-primary</code> on <code>:root</code>; the gradient stops, links, focus glow and pagination follow.</span>
+        </div>
+      </div>
+      <div class="clearfix" style="margin-bottom:0">
+        <label>Colour mode</label>
+        <div class="input">
+          <span class="mode-group" role="group" aria-label="Colour mode">
+            <button class="btn" type="button" data-mode="auto">Auto</button>
+            <button class="btn" type="button" data-mode="light">Light</button>
+            <button class="btn" type="button" data-mode="dark">Dark</button>
+          </span>
+          <span class="help-inline" id="t-mode-note"></span>
+        </div>
       </div>
     </div>
   </section>
@@ -216,15 +244,60 @@
 </div>
 
 <script>
-  const root = document.documentElement.style;
-  const map = { 't-primary': '--retro-primary', 't-primary-dark': '--retro-primary-dark', 't-link': '--retro-link', 't-red': '--retro-red' };
-  for (const [id, prop] of Object.entries(map)) {
-    document.getElementById(id).addEventListener('input', e => root.setProperty(prop, e.target.value));
+  const html = document.documentElement;
+  const DEFAULT_BRAND = '#049cdb';
+  const dark = matchMedia('(prefers-color-scheme: dark)');
+  const store = {
+    get: k => { try { return localStorage.getItem(k); } catch (e) { return null; } },
+    set: (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); } catch (e) {} }
+  };
+
+  /* Colour mode: 'auto' (no attribute, follows the OS), 'light' or 'dark' */
+  const modeButtons = document.querySelectorAll('[data-mode]');
+  const toggle = document.getElementById('mode-toggle');
+  const note = document.getElementById('t-mode-note');
+  const effective = () => html.dataset.theme || (dark.matches ? 'dark' : 'light');
+
+  function syncMode() {
+    const current = html.dataset.theme || 'auto';
+    modeButtons.forEach(b => {
+      const on = b.dataset.mode === current;
+      b.classList.toggle('active', on);
+      b.setAttribute('aria-pressed', on);
+    });
+    toggle.textContent = effective() === 'dark' ? 'Light' : 'Dark';
+    toggle.setAttribute('aria-pressed', effective() === 'dark');
+    note.textContent = 'Showing ' + effective() + (current === 'auto' ? ' (system)' : '');
   }
-  document.getElementById('t-reset').addEventListener('click', () => {
-    for (const prop of Object.values(map)) root.removeProperty(prop);
-    for (const id of Object.keys(map)) { const el = document.getElementById(id); el.value = el.defaultValue; }
+  function setMode(mode) {
+    if (mode === 'auto') delete html.dataset.theme; else html.dataset.theme = mode;
+    store.set('retro-mode', mode === 'auto' ? null : mode);
+    syncMode();
+  }
+  modeButtons.forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+  toggle.addEventListener('click', e => { e.preventDefault(); setMode(effective() === 'dark' ? 'light' : 'dark'); });
+  dark.addEventListener('change', syncMode);
+
+  /* Brand colour: only --retro-primary is set; data-retro-brand="derived"
+     lets the CSS derive the dark stop, focus glow and link colour from it. */
+  const brand = document.getElementById('t-brand');
+  const brandHex = document.getElementById('t-brand-hex');
+  function setBrand(value) {
+    html.dataset.retroBrand = 'derived';
+    html.style.setProperty('--retro-primary', value);
+    brand.value = brandHex.textContent = value;
+    store.set('retro-brand', value);
+  }
+  brand.addEventListener('input', e => setBrand(e.target.value));
+  document.getElementById('t-brand-reset').addEventListener('click', () => {
+    delete html.dataset.retroBrand;
+    html.style.removeProperty('--retro-primary');
+    brand.value = brandHex.textContent = DEFAULT_BRAND;
+    store.set('retro-brand', null);
   });
+  if (store.get('retro-brand')) setBrand(store.get('retro-brand'));
+  syncMode();
+
   const dlg = document.getElementById('dlg');
   document.getElementById('open-dialog').addEventListener('click', () => dlg.showModal());
   document.getElementById('close-dialog').addEventListener('click', () => dlg.close());
